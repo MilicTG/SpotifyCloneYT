@@ -1,12 +1,15 @@
 package com.plcoding.spotifycloneyt.adapters
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.plcoding.spotifycloneyt.R
 import com.plcoding.spotifycloneyt.data.entity.Song
+import kotlinx.android.synthetic.main.list_item.view.*
 import javax.inject.Inject
 
 class SongAdapter @Inject constructor(
@@ -32,16 +35,40 @@ class SongAdapter @Inject constructor(
         set(value) = differ.submitList(value)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        TODO("Not yet implemented")
+        return SongViewHolder(
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.list_item,
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val song = songs[position]
+        holder.itemView.apply {
+            tvPrimary.text = song.title
+            tvSecondary.text = song.subtitle
+            glide.load(song.imageUrl)
+                .centerCrop()
+                .into(ivItemImage)
+
+            setOnClickListener {
+                onItemClickListener?.let { click ->
+                    click(song)
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return songs.size
     }
 
+    private var onItemClickListener: ((Song) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (Song) -> Unit) {
+        onItemClickListener = listener
+    }
 
 }
