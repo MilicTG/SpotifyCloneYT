@@ -16,10 +16,6 @@ class SongViewModel @ViewModelInject constructor(
     musicServiceConnection: MusicServiceConnection
 ) : ViewModel() {
 
-    init {
-        updateCurrentPlayerPosition()
-    }
-
     private val playbackState = musicServiceConnection.playbackState
 
     private val _currentSongDuration = MutableLiveData<Long>()
@@ -28,11 +24,15 @@ class SongViewModel @ViewModelInject constructor(
     private val _currentPlayerPosition = MutableLiveData<Long>()
     val currentPlayerPosition: LiveData<Long> = _currentPlayerPosition
 
-    private fun updateCurrentPlayerPosition(){
+    init {
+        updateCurrentPlayerPosition()
+    }
+
+    private fun updateCurrentPlayerPosition() {
         viewModelScope.launch {
-            while (true){
+            while (true) {
                 val pos = playbackState.value?.currentPlaybackPosition
-                if (currentPlayerPosition.value != pos){
+                if (currentPlayerPosition.value != pos) {
                     _currentPlayerPosition.postValue(pos)
                     _currentSongDuration.postValue(MusicService.currentSongDuration)
                 }
